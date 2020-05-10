@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SocialNetwork.Data;
 
 namespace SocialNetwork.Migrations
 {
     [DbContext(typeof(SocialNetworkContext))]
-    partial class SocialNetworkContextModelSnapshot : ModelSnapshot
+    [Migration("20200510200335_Cities")]
+    partial class Cities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,9 +87,6 @@ namespace SocialNetwork.Migrations
                     b.Property<int>("CityID")
                         .HasColumnType("int");
 
-                    b.Property<int>("CountryID")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
 
@@ -129,8 +128,6 @@ namespace SocialNetwork.Migrations
 
                     b.HasIndex("CityID");
 
-                    b.HasIndex("CountryID");
-
                     b.HasIndex("SecurityQuestionID");
 
                     b.ToTable("User");
@@ -150,12 +147,6 @@ namespace SocialNetwork.Migrations
                     b.HasOne("SocialNetwork.Models.City", "City")
                         .WithMany()
                         .HasForeignKey("CityID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SocialNetwork.Models.Country", "Country")
-                        .WithMany()
-                        .HasForeignKey("CountryID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

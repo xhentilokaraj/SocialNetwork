@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SocialNetwork.Models
 {
+
     public class User
     {
         public int Id { get; set; }
@@ -38,7 +39,6 @@ namespace SocialNetwork.Models
         public DateTime DateOfBirth { get; set; }
 
 
-
         [Required]
         [Display(Name = "Security Question Answer")]
         public string SecurityQuestionAnswer { get; set; }
@@ -46,8 +46,20 @@ namespace SocialNetwork.Models
         [Display(Name = "Security Question")]
         public int SecurityQuestionID { get; set; }
 
+        [Display(Name = "City")]
+        public int CityID { get; set; }
+
+        [Display(Name = "Country")]
+        public int CountryID { get; set; }
+
         [Display(Name = "Security Question")]
         public SecurityQuestion SecurityQuestion { get; set; }
+
+        [Display(Name = "City")]
+        public City City { get; set; }
+
+        [Display(Name = "Country")]
+        public Country Country { get; set; }
 
     }
 }

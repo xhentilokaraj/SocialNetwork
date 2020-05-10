@@ -10,23 +10,23 @@ using SocialNetwork.Models;
 
 namespace SocialNetwork.Controllers
 {
-    public class UsersController : Controller
+    public class CitiesController : Controller
     {
         private readonly SocialNetworkContext _context;
 
-        public UsersController(SocialNetworkContext context)
+        public CitiesController(SocialNetworkContext context)
         {
             _context = context;
         }
 
-        // GET: Users
+        // GET: Cities
         public async Task<IActionResult> Index()
         {
-            var socialNetworkContext = _context.User.Include(u => u.City).Include(u => u.Country).Include(u => u.SecurityQuestion);
+            var socialNetworkContext = _context.City.Include(c => c.Country);
             return View(await socialNetworkContext.ToListAsync());
         }
 
-        // GET: Users/Details/5
+        // GET: Cities/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,48 +34,42 @@ namespace SocialNetwork.Controllers
                 return NotFound();
             }
 
-            var user = await _context.User
-                .Include(u => u.City)
-                .Include(u => u.Country)
-                .Include(u => u.SecurityQuestion)
+            var city = await _context.City
+                .Include(c => c.Country)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (user == null)
+            if (city == null)
             {
                 return NotFound();
             }
 
-            return View(user);
+            return View(city);
         }
 
-        // GET: Users/Create
+        // GET: Cities/Create
         public IActionResult Create()
         {
-            ViewData["CityID"] = new SelectList(_context.City, "Id", "CityName");
             ViewData["CountryID"] = new SelectList(_context.Country, "Id", "CountryName");
-            ViewData["SecurityQuestionID"] = new SelectList(_context.SecurityQuestion, "Id", "Question");
             return View();
         }
 
-        // POST: Users/Create
+        // POST: Cities/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Phone,Gender,Age,Email,Password,UserType,DateOfBirth,SecurityQuestionAnswer,SecurityQuestionID,CityID,CountryID")] User user)
+        public async Task<IActionResult> Create([Bind("Id,CityName,CountryID")] City city)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(user);
+                _context.Add(city);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CityID"] = new SelectList(_context.City, "Id", "CityName", user.CityID);
-            ViewData["CountryID"] = new SelectList(_context.Country, "Id", "CountryName", user.CountryID);
-            ViewData["SecurityQuestionID"] = new SelectList(_context.SecurityQuestion, "Id", "Question", user.SecurityQuestionID);
-            return View(user);
+            ViewData["CountryID"] = new SelectList(_context.Country, "Id", "CountryName", city.CountryID);
+            return View(city);
         }
 
-        // GET: Users/Edit/5
+        // GET: Cities/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -83,25 +77,23 @@ namespace SocialNetwork.Controllers
                 return NotFound();
             }
 
-            var user = await _context.User.FindAsync(id);
-            if (user == null)
+            var city = await _context.City.FindAsync(id);
+            if (city == null)
             {
                 return NotFound();
             }
-            ViewData["CityID"] = new SelectList(_context.City, "Id", "CityName", user.CityID);
-            ViewData["CountryID"] = new SelectList(_context.Country, "Id", "CountryName", user.CountryID);
-            ViewData["SecurityQuestionID"] = new SelectList(_context.SecurityQuestion, "Id", "Question", user.SecurityQuestionID);
-            return View(user);
+            ViewData["CountryID"] = new SelectList(_context.Country, "Id", "CountryName", city.CountryID);
+            return View(city);
         }
 
-        // POST: Users/Edit/5
+        // POST: Cities/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Phone,Gender,Age,Email,Password,UserType,DateOfBirth,SecurityQuestionAnswer,SecurityQuestionID,CityID,CountryID")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,CityName,CountryID")] City city)
         {
-            if (id != user.Id)
+            if (id != city.Id)
             {
                 return NotFound();
             }
@@ -110,12 +102,12 @@ namespace SocialNetwork.Controllers
             {
                 try
                 {
-                    _context.Update(user);
+                    _context.Update(city);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserExists(user.Id))
+                    if (!CityExists(city.Id))
                     {
                         return NotFound();
                     }
@@ -126,13 +118,11 @@ namespace SocialNetwork.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CityID"] = new SelectList(_context.City, "Id", "CityName", user.CityID);
-            ViewData["CountryID"] = new SelectList(_context.Country, "Id", "CountryName", user.CountryID);
-            ViewData["SecurityQuestionID"] = new SelectList(_context.SecurityQuestion, "Id", "Question", user.SecurityQuestionID);
-            return View(user);
+            ViewData["CountryID"] = new SelectList(_context.Country, "Id", "CountryName", city.CountryID);
+            return View(city);
         }
 
-        // GET: Users/Delete/5
+        // GET: Cities/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -140,33 +130,31 @@ namespace SocialNetwork.Controllers
                 return NotFound();
             }
 
-            var user = await _context.User
-                .Include(u => u.City)
-                .Include(u => u.Country)
-                .Include(u => u.SecurityQuestion)
+            var city = await _context.City
+                .Include(c => c.Country)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (user == null)
+            if (city == null)
             {
                 return NotFound();
             }
 
-            return View(user);
+            return View(city);
         }
 
-        // POST: Users/Delete/5
+        // POST: Cities/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var user = await _context.User.FindAsync(id);
-            _context.User.Remove(user);
+            var city = await _context.City.FindAsync(id);
+            _context.City.Remove(city);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UserExists(int id)
+        private bool CityExists(int id)
         {
-            return _context.User.Any(e => e.Id == id);
+            return _context.City.Any(e => e.Id == id);
         }
     }
 }
