@@ -28,6 +28,13 @@ namespace SocialNetwork
             services.AddControllersWithViews();
             services.AddDbContext<SocialNetworkContext>(options =>
         options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddAuthentication("CookieAuthentication")
+     .AddCookie("CookieAuthentication", config =>
+     {
+         config.Cookie.Name = "UserLoginCookie";
+         config.LoginPath = "/Login/Index";
+     });
+
         }
 
 
@@ -44,6 +51,8 @@ namespace SocialNetwork
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+            app.UseAuthentication();
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 

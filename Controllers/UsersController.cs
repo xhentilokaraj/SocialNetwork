@@ -7,16 +7,21 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SocialNetwork.Data;
 using SocialNetwork.Models;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace SocialNetwork.Controllers
 {
     public class UsersController : Controller
     {
         private readonly SocialNetworkContext _context;
+        private readonly IWebHostEnvironment webHostEnvironment;
 
-        public UsersController(SocialNetworkContext context)
+
+        public UsersController(SocialNetworkContext context, IWebHostEnvironment hostEnvironment)
         {
             _context = context;
+            webHostEnvironment = hostEnvironment;
         }
 
         // GET: Users
@@ -43,7 +48,7 @@ namespace SocialNetwork.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.CurrentProfileImage = user.ProfilePicture;
             return View(user);
         }
 
@@ -61,10 +66,12 @@ namespace SocialNetwork.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Phone,Gender,Age,Email,Password,UserType,DateOfBirth,SecurityQuestionAnswer,SecurityQuestionID,CityID,CountryID")] User user)
+        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Phone,Gender,Age,Email,Password,UserType,DateOfBirth,ProfileImage,SecurityQuestionAnswer,SecurityQuestionID,CityID,CountryID")] User user)
         {
             if (ModelState.IsValid)
             {
+                string uniqueFileName = UploadedFile(user);
+                user.ProfilePicture = uniqueFileName;
                 _context.Add(user);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -99,7 +106,7 @@ namespace SocialNetwork.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Phone,Gender,Age,Email,Password,UserType,DateOfBirth,SecurityQuestionAnswer,SecurityQuestionID,CityID,CountryID")] User user)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Phone,Gender,Age,Email,Password,UserType,DateOfBirth,ProfileImage,ProfilePicture,SecurityQuestionAnswer,SecurityQuestionID,CityID,CountryID")] User user)
         {
             if (id != user.Id)
             {
@@ -167,6 +174,35 @@ namespace SocialNetwork.Controllers
         private bool UserExists(int id)
         {
             return _context.User.Any(e => e.Id == id);
+        }
+
+        private string UploadedFile(User model)
+        {
+            string uniqueFileName = null;
+
+            if (model.ProfileImage != null)
+            {
+                string uploadsFolder = Path.Combine(webHostEnvironment.WebRootPath, "images");
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + model.ProfileImage.FileName;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                if (!String.IsNullOrEmpty(model.ProfilePicture))
+                {
+                    string previousFilePath = Path.Combine(uploadsFolder, model.ProfilePicture);
+                    try
+                    {
+                        System.IO.File.Delete(previousFilePath);
+                    }
+                    catch (IOException copyError)
+                    {
+                        Console.WriteLine(copyError.Message);
+                    }
+                }
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    model.ProfileImage.CopyTo(fileStream);
+                }
+            }
+            return uniqueFileName;
         }
     }
 }

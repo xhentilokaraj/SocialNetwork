@@ -1,0 +1,42 @@
+﻿@model SocialNetwork.Models.User
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container login-container">
+    <div class="row">
+        <div class="col-md-6 login-form-1">
+            <h3>Login</h3>
+            <form asp-action="Index">
+                <div class="form-group">
+                    <input asp-for="Email" class="form-control" placeholder="Your Email *" type="email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input asp-for="Password" class="form-control" placeholder="Your Password *" type="password" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <input type="submit" value="Login" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <h3>Register</h3>
+            <p>Don't have an account?</p>
+            <div class="form-group">
+                <a asp-controller="Users" asp-action="Create" class="btn btn-primary">Register Now</a>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

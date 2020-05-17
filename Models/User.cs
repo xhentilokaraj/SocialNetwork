@@ -1,9 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http;
+
 
 namespace SocialNetwork.Models
 {
-
     public class User
     {
         public int Id { get; set; }
@@ -37,6 +39,14 @@ namespace SocialNetwork.Models
         [DataType(DataType.Date)]
         [Display(Name = "Date of Birth")]
         public DateTime DateOfBirth { get; set; }
+
+        [Required(ErrorMessage = "Please choose profile image")]
+        [Display(Name = "Profile Picture")]
+        [NotMapped]
+        public IFormFile ProfileImage { get; set; }
+
+        [Display(Name = "Profile Picture")]
+        public string ProfilePicture { get; set; }
 
 
         [Required]

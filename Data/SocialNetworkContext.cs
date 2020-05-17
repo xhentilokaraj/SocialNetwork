@@ -14,5 +14,6 @@ namespace SocialNetwork.Data
         public DbSet<SecurityQuestion> SecurityQuestion { get; set; }
         public DbSet<SocialNetwork.Models.Country> Country { get; set; }
         public DbSet<SocialNetwork.Models.City> City { get; set; }
+        public DbSet<SocialNetwork.Models.UserRelationship> UserRelationship { get; set; }
     }
 }

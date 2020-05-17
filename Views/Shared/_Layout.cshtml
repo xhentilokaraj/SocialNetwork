@@ -21,15 +21,45 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
-                        </li>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Users" asp-action="Index">Users</a>
+                            </li>
+                        }
                         @*<li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                             </li>*@
                     </ul>
                 </div>
-            </div>
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    <div class="nav navbar-nav ml-auto">
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Login" asp-action="Index">Login</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <div class="btn-group">
+                                <button class="btn btn-secondary dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+
+                                    @{string userId = string.Join("###", User.Claims.ToList()).Split("###")[3].Split(": ")[1];}
+                                    @{string imagePath = string.Join("###", User.Claims.ToList()).Split("###")[2].Split(": ")[1];}
+                                    <img src="~/images/@imagePath"
+                                         class="rounded-circle"
+                                         height="40" width="40"
+                                         asp-append-version="true" />
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="nav-link text-dark dropdown-item" asp-area="" asp-controller="Users" asp-route-id="@userId" asp-action="Details">Profile</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="nav-link text-dark dropdown-item" asp-area="" asp-controller="Login" asp-action="Logout">Logout</a>
+                                </div>
+                            </div>
+                        }
+                    </div>
         </nav>
     </header>
     <div class="container">

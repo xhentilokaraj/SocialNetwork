@@ -1,0 +1,57 @@
+﻿@model SocialNetwork.Models.UserRelationship
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Edit</h1>
+
+<h4>UserRelationship</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="RelatingUserId" class="control-label"></label>
+                <select asp-for="RelatingUserId" class="form-control" asp-items="ViewBag.RelatingUserId"></select>
+                <span asp-validation-for="RelatingUserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RelatedUserId" class="control-label"></label>
+                <select asp-for="RelatedUserId" class="form-control" asp-items="ViewBag.RelatedUserId"></select>
+                <span asp-validation-for="RelatedUserId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RequestStatus" class="control-label"></label>
+                <input asp-for="RequestStatus" class="form-control" />
+                <span asp-validation-for="RequestStatus" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RelationshipStatus" class="control-label"></label>
+                <input asp-for="RelationshipStatus" class="form-control" />
+                <span asp-validation-for="RelationshipStatus" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateOfRequest" class="control-label"></label>
+                <input asp-for="DateOfRequest" class="form-control" />
+                <span asp-validation-for="DateOfRequest" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DateOfAcceptance" class="control-label"></label>
+                <input asp-for="DateOfAcceptance" class="form-control" />
+                <span asp-validation-for="DateOfAcceptance" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
