@@ -48,7 +48,6 @@ namespace SocialNetwork.Models
         [Display(Name = "Profile Picture")]
         public string ProfilePicture { get; set; }
 
-
         [Required]
         [Display(Name = "Security Question Answer")]
         public string SecurityQuestionAnswer { get; set; }

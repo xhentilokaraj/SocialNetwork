@@ -5,13 +5,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Create</h1>
+<h1>Register</h1>
 
-<h4>User</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" enctype="multipart/form-data">
+
+<form asp-action="Create" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-md-5">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label"></label>
@@ -28,12 +28,15 @@
                 <input asp-for="Phone" class="form-control" />
                 <span asp-validation-for="Phone" class="text-danger"></span>
             </div>
-            <select asp-for="Gender" class="form-control">
-                <option>Female</option>
-                <option>Male</option>
-                <option>Unspecified</option>
-            </select>
-            <span asp-validation-for="Gender" class="text-danger"></span>
+            <div class="form-group">
+                <label asp-for="Gender" class="control-label"></label>
+                <select asp-for="Gender" class="form-control">
+                    <option>Female</option>
+                    <option>Male</option>
+                    <option>Unspecified</option>
+                </select>
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div>
             <div class="form-group">
                 <label asp-for="Age" class="control-label"></label>
                 <input asp-for="Age" class="form-control" />
@@ -47,6 +50,14 @@
                 </div>
                 <span asp-validation-for="ProfileImage" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label asp-for="DateOfBirth" class="control-label"></label>
+                <input asp-for="DateOfBirth" class="form-control" />
+                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="col-md-5">
+
 
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
@@ -58,11 +69,7 @@
                 <input asp-for="Password" class="form-control" type="password" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="DateOfBirth" class="control-label"></label>
-                <input asp-for="DateOfBirth" class="form-control" />
-                <span asp-validation-for="DateOfBirth" class="text-danger"></span>
-            </div>
+
             <div class="form-group">
                 <label asp-for="CountryID" class="control-label"></label>
                 <select asp-for="CountryID" class="form-control" asp-items="ViewBag.CountryID"></select>
@@ -81,18 +88,17 @@
                 <span asp-validation-for="SecurityQuestionAnswer" class="text-danger"></span>
             </div>
 
-
-
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Register" class="btn btn-primary" />
             </div>
-        </form>
+        </div>
     </div>
-</div>
+</form>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+
+@*<div>
+        <a asp-action="Index">Back to List</a>
+    </div>*@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

@@ -21,10 +21,12 @@ namespace SocialNetwork.Controllers
     {
         private readonly SocialNetworkContext _context;
         private readonly ILogger _logger;
+        private SmtpClient smtpClient;
 
-        public LoginController(SocialNetworkContext context, ILogger<LoginController> logger)
+        public LoginController(SocialNetworkContext context, ILogger<LoginController> logger, SmtpClient smtpClient)
         {
             _context = context;
+            this.smtpClient = smtpClient;
         }
 
         // GET: /Login/Create
@@ -84,7 +86,55 @@ namespace SocialNetwork.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(string Email)
+        {
+            var user = await _context.User
+               .FirstOrDefaultAsync(m => m.Email == Email);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+            var securityQuestion = await _context.SecurityQuestion.FindAsync(user.SecurityQuestionID);
+            ViewBag.SecurityQuestion = securityQuestion.Question;
+            ViewBag.UserEmail = user.Email;
+            return View("ForgotPassword");
+        }
+
+        public IActionResult ForgotPasswordSend()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPasswordSend(string UserEmail, string SecurityQuestionAnswer)
+        {
+            var user = await _context.User
+               .FirstOrDefaultAsync(m => m.Email == UserEmail && m.SecurityQuestionAnswer == SecurityQuestionAnswer);
+
+            if (user == null)
+            {
+                return View("Index", "Home");
+            }
+            var securityQuestion = await _context.SecurityQuestion.FindAsync(user.SecurityQuestionID);
+            ViewBag.SecurityQuestion = securityQuestion.Question;
+            ViewBag.UserEmail = user.Email;
+            await this.smtpClient.SendMailAsync(new MailMessage(
+                from: "a.hoxha@studiosynthesis.biz",
+                to: user.Email,
+                subject: "Test message subject",
+                body: "Test message body"
+                ));
+            return View("ForgotPasswordSend");
+        }
 
     }
 }

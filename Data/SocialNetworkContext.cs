@@ -15,5 +15,13 @@ namespace SocialNetwork.Data
         public DbSet<SocialNetwork.Models.Country> Country { get; set; }
         public DbSet<SocialNetwork.Models.City> City { get; set; }
         public DbSet<SocialNetwork.Models.UserRelationship> UserRelationship { get; set; }
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<User>()
+                .HasIndex(b => b.Email)
+                .IsUnique();
+        }
     }
 }

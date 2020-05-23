@@ -9,9 +9,11 @@ using SocialNetwork.Data;
 using SocialNetwork.Models;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SocialNetwork.Controllers
 {
+    
     public class UsersController : Controller
     {
         private readonly SocialNetworkContext _context;
@@ -24,6 +26,7 @@ namespace SocialNetwork.Controllers
             webHostEnvironment = hostEnvironment;
         }
 
+        [Authorize]
         // GET: Users
         public async Task<IActionResult> Index()
         {
@@ -31,6 +34,7 @@ namespace SocialNetwork.Controllers
             return View(await socialNetworkContext.ToListAsync());
         }
 
+        [Authorize]
         // GET: Users/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -83,6 +87,7 @@ namespace SocialNetwork.Controllers
         }
 
         // GET: Users/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -104,6 +109,7 @@ namespace SocialNetwork.Controllers
         // POST: Users/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for 
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Phone,Gender,Age,Email,Password,UserType,DateOfBirth,ProfileImage,ProfilePicture,SecurityQuestionAnswer,SecurityQuestionID,CityID,CountryID")] User user)
@@ -136,10 +142,11 @@ namespace SocialNetwork.Controllers
             ViewData["CityID"] = new SelectList(_context.City, "Id", "CityName", user.CityID);
             ViewData["CountryID"] = new SelectList(_context.Country, "Id", "CountryName", user.CountryID);
             ViewData["SecurityQuestionID"] = new SelectList(_context.SecurityQuestion, "Id", "Question", user.SecurityQuestionID);
-            return View(user);
+            return View("Details", user.Id);
         }
 
         // GET: Users/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -160,6 +167,7 @@ namespace SocialNetwork.Controllers
             return View(user);
         }
 
+        [Authorize]
         // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
