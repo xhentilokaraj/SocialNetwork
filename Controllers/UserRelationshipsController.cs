@@ -162,5 +162,188 @@ namespace SocialNetwork.Controllers
         {
             return _context.UserRelationship.Any(e => e.Id == id);
         }
+
+        public async Task<IActionResult> RelationshipManager(string searchString)
+        {
+            ViewData["CurrentFilter"] = searchString;
+            var loggedInUser = await _context.User
+                .FirstOrDefaultAsync(m => m.Email == User.Identity.Name);
+
+            var socialNetworkContext = _context.UserRelationship
+                .Include(u => u.RelatedUser)
+                .Include(u => u.RelatingUser)
+                .Where(u => u.RelatedUserId == loggedInUser.Id || u.RelatingUserId == loggedInUser.Id);
+
+            var includedRelated = socialNetworkContext
+                .Select(u => u.RelatedUser);
+
+            var includedRelating = socialNetworkContext
+                .Select(u => u.RelatingUser);
+
+            ViewData["OtherUsers"] = _context.User
+                .Where(u => u.Id != loggedInUser.Id)
+                .Except(includedRelated)
+                .Except(includedRelating).ToList();
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                socialNetworkContext = _context.UserRelationship
+                    .Include(u => u.RelatedUser)
+                    .Include(u => u.RelatingUser)
+                    .Where(u => u.RelatedUserId == loggedInUser.Id || u.RelatingUserId == loggedInUser.Id)
+                    .Where(u => u.RelatingUser.FirstName.Contains(searchString) || u.RelatingUser.FirstName.Contains(searchString));
+
+                includedRelated = socialNetworkContext
+                .Select(u => u.RelatedUser);
+
+                includedRelating = socialNetworkContext
+                .Select(u => u.RelatingUser);
+
+                ViewData["OtherUsers"] = _context.User
+                    .Where(u => u.Id != loggedInUser.Id && u.FirstName.Contains(searchString))
+                    .Except(includedRelated)
+                    .Except(includedRelating).ToList();
+
+            }
+
+            return View(await socialNetworkContext.ToListAsync());
+        }
+
+        public async Task<IActionResult> Send(int id)
+        {
+            var loggedInUser = await _context.User
+                .FirstOrDefaultAsync(m => m.Email == User.Identity.Name);
+            UserRelationship userRelationship = new UserRelationship();
+            userRelationship.DateOfRequest = DateTime.Now;
+            userRelationship.RelatedUserId = id;
+            userRelationship.RelatingUserId = loggedInUser.Id;
+            userRelationship.RequestStatus = "Pending";
+            userRelationship.RelationshipStatus = "Not Friend";
+            if (ModelState.IsValid)
+            {
+                _context.Add(userRelationship);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(RelationshipManager), new { @search = ViewData["CurrentFilter"] });
+        }
+
+        public async Task<IActionResult> Cancel(int? id)
+        {
+            var userRelationship = await _context.UserRelationship.FindAsync(id);
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    userRelationship.RequestStatus = "Canceled";
+                    _context.Update(userRelationship);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!UserRelationshipExists(userRelationship.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+            return RedirectToAction(nameof(RelationshipManager), new { @search = ViewData["CurrentFilter"] });
+
+        }
+
+        public async Task<IActionResult> Accept(int? id)
+        {
+            var userRelationship = await _context.UserRelationship.FindAsync(id);
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    userRelationship.RequestStatus = "Accepted";
+                    userRelationship.RelationshipStatus = "Friend";
+                    _context.Update(userRelationship);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!UserRelationshipExists(userRelationship.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+            return RedirectToAction(nameof(RelationshipManager), new { @search = ViewData["CurrentFilter"] });
+        }
+
+        public async Task<IActionResult> Decline(int? id)
+        {
+            var userRelationship = await _context.UserRelationship.FindAsync(id);
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    userRelationship.RequestStatus = "Declined";
+                    userRelationship.RelationshipStatus = "Not Friend";
+                    _context.Update(userRelationship);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!UserRelationshipExists(userRelationship.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+            return RedirectToAction(nameof(RelationshipManager), new { @search = ViewData["CurrentFilter"] });
+        }
+
+        public async Task<IActionResult> Resend(int? id)
+        {
+            var userRelationship = await _context.UserRelationship.FindAsync(id);
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    userRelationship.RequestStatus = "Pending";
+                    _context.Update(userRelationship);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!UserRelationshipExists(userRelationship.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+            }
+            return RedirectToAction(nameof(RelationshipManager), new { @search = ViewData["CurrentFilter"] });
+        }
+
+        public async Task<IActionResult> Remove(int? id)
+        {
+            var userRelationship = await _context.UserRelationship.FindAsync(id);
+            _context.UserRelationship.Remove(userRelationship);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(RelationshipManager), ViewData["CurrentFilter"]);
+        }
     }
 }

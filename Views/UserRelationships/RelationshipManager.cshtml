@@ -1,0 +1,148 @@
+﻿@model IEnumerable<SocialNetwork.Models.UserRelationship>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>User Relationships</h1>
+<br>
+<br>
+<br>
+<form asp-action="RelationshipManager" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by name: <input type="text" name="SearchString" value="@ViewData["currentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-primary" /> |
+            <a asp-action="RelationshipManager">Back to Full List</a>
+        </p>
+    </div>
+</form>
+<br>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.RelatingUser.ProfilePicture)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RelatingUser.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RelatingUser.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RelatingUser.LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RequestStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RelationshipStatus)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                @if (User.Identity.Name != item.RelatingUser.Email)
+                {
+                    <td>
+                        <img src="~/images/@item.RelatingUser.ProfilePicture"
+                             class="rounded-circle"
+                             height="50" width="50"
+                             asp-append-version="true" />
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RelatingUser.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RelatingUser.FirstName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RelatingUser.LastName)
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <img src="~/images/@item.RelatedUser.ProfilePicture"
+                             class="rounded-circle"
+                             height="50" width="50"
+                             asp-append-version="true" />
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RelatedUser.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RelatedUser.FirstName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RelatedUser.LastName)
+                    </td>
+                }
+                <td>
+                    @Html.DisplayFor(modelItem => item.RequestStatus)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RelationshipStatus)
+                </td>
+                <td>
+                    @if (item.RequestStatus == "Accepted")
+                    {
+                        <a asp-action="Remove" asp-route-id="@item.Id">Remove Friend</a>
+                    }
+                    else if (User.Identity.Name == item.RelatingUser.Email && item.RequestStatus == "Pending")
+                    {
+                        <a asp-action="Cancel" asp-route-id="@item.Id">Cancel Request</a>
+                    }
+                    else if (User.Identity.Name == item.RelatingUser.Email && (item.RequestStatus == "Canceled" || item.RequestStatus == "Declined"))
+                    {
+                        <a asp-action="Resend" asp-route-id="@item.Id">Resend Request</a>
+                    }
+                    else if (User.Identity.Name == item.RelatedUser.Email && item.RequestStatus == "Pending")
+                    {
+                        <a asp-action="Accept" asp-route-id="@item.Id">Accept </a>@:|
+                        <a asp-action="Decline" asp-route-id="@item.Id">Decline </a>@:
+                    }
+                </td>
+            </tr>
+
+
+        }
+
+        @{var otherList = ViewData["OtherUsers"] as List<SocialNetwork.Models.User>; }
+
+        @foreach (var item in otherList)
+        {
+            <tr>
+                <td>
+                    <img src="~/images/@item.ProfilePicture"
+                         class="rounded-circle"
+                         height="50" width="50"
+                         asp-append-version="true" />
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FirstName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastName)
+                </td>
+                <td>
+                    Not Sent
+                </td>
+                <td>
+                    Not Friend
+                </td>
+                <td>
+                    <a asp-action="Send" asp-route-id="@item.Id">Send Request</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

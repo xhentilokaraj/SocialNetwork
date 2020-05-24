@@ -21,6 +21,9 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="UserRelationships" asp-action="RelationshipManager">Relationships</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Communities" asp-action="Index">Communities</a>
                             </li>
                         }
