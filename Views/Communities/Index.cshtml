@@ -1,0 +1,96 @@
+﻿@model PaginatedList<SocialNetwork.Models.Community>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by name: <input type="text" name="SearchString" value="@ViewData["currentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-primary" /> |
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Community
+            </th>
+            @if (User.IsInRole("admin"))
+            {
+                <th>
+                    Status
+                </th>
+            }
+            <th>
+                Owner
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            @if (User.IsInRole("admin") || ((!User.IsInRole("admin") && item.Status == "Active")))
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CommunityName)
+                    </td>
+                    @if (User.IsInRole("admin"))
+                    {
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Status)
+                        </td>
+                    }
+                <td>
+                    @Html.DisplayFor(modelItem => item.Owner.FirstName)
+                    @Html.DisplayFor(modelItem => item.Owner.LastName)
+                </td>
+                    <td>
+                        | <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+
+                        @if (User.IsInRole("admin"))
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        }
+
+
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-pageNumber="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-secondary @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index"
+   asp-route-pageNumber="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-secondary @nextDisabled">
+    Next
+</a>

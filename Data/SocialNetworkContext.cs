@@ -23,5 +23,11 @@ namespace SocialNetwork.Data
                 .HasIndex(b => b.Email)
                 .IsUnique();
         }
+
+
+        public DbSet<SocialNetwork.Models.Community> Community { get; set; }
+
+
+        public DbSet<SocialNetwork.Models.CommunityMember> CommunityMember { get; set; }
     }
 }

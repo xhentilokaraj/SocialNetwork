@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SocialNetwork.Data;
 
 namespace SocialNetwork.Migrations
 {
     [DbContext(typeof(SocialNetworkContext))]
-    partial class SocialNetworkContextModelSnapshot : ModelSnapshot
+    [Migration("20200523205511_Communities")]
+    partial class Communities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,34 +67,6 @@ namespace SocialNetwork.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("Community");
-                });
-
-            modelBuilder.Entity("SocialNetwork.Models.CommunityMember", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CommunityId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("DateOfJoining")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CommunityId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("CommunityMember");
                 });
 
             modelBuilder.Entity("SocialNetwork.Models.Country", b =>
@@ -245,21 +219,6 @@ namespace SocialNetwork.Migrations
                     b.HasOne("SocialNetwork.Models.User", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("SocialNetwork.Models.CommunityMember", b =>
-                {
-                    b.HasOne("SocialNetwork.Models.Community", "Community")
-                        .WithMany()
-                        .HasForeignKey("CommunityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SocialNetwork.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
