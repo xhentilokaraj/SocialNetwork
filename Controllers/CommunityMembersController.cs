@@ -67,11 +67,11 @@ namespace SocialNetwork.Controllers
             {
                 _context.Add(communityMember);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Communities");
             }
             ViewData["CommunityId"] = new SelectList(_context.Community, "Id", "CommunityName", communityMember.CommunityId);
             ViewData["UserId"] = new SelectList(_context.User, "Id", "Email", communityMember.UserId);
-            return View(communityMember);
+            return View("Index", "Community");
         }
 
         // GET: CommunityMembers/Edit/5
@@ -122,11 +122,11 @@ namespace SocialNetwork.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Communities");
             }
             ViewData["CommunityId"] = new SelectList(_context.Community, "Id", "CommunityName", communityMember.CommunityId);
             ViewData["UserId"] = new SelectList(_context.User, "Id", "Email", communityMember.UserId);
-            return View(communityMember);
+            return View("Index", "Community");
         }
 
         // GET: CommunityMembers/Delete/5
@@ -157,7 +157,7 @@ namespace SocialNetwork.Controllers
             var communityMember = await _context.CommunityMember.FindAsync(id);
             _context.CommunityMember.Remove(communityMember);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Communities");
         }
 
         private bool CommunityMemberExists(int id)

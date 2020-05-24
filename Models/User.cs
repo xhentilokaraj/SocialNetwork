@@ -40,7 +40,7 @@ namespace SocialNetwork.Models
         [Display(Name = "Date of Birth")]
         public DateTime DateOfBirth { get; set; }
 
-        [Required(ErrorMessage = "Please choose profile image")]
+        [Required]
         [Display(Name = "Profile Picture")]
         [NotMapped]
         public IFormFile ProfileImage { get; set; }

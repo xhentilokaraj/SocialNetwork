@@ -126,13 +126,6 @@ namespace SocialNetwork.Controllers
             }
             var securityQuestion = await _context.SecurityQuestion.FindAsync(user.SecurityQuestionID);
             ViewBag.SecurityQuestion = securityQuestion.Question;
-            ViewBag.UserEmail = user.Email;
-            await this.smtpClient.SendMailAsync(new MailMessage(
-                from: "a.hoxha@studiosynthesis.biz",
-                to: user.Email,
-                subject: "Test message subject",
-                body: "Test message body"
-                ));
             return View("ForgotPasswordSend");
         }
 
